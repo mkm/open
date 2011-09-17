@@ -1,0 +1,25 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+
+my $conffile = $ENV{"HOME"} . "/.openrc";
+
+my %file_types = ();
+
+if (-e $conffile) {
+    open(my $fh, "<", $conffile);
+    while (<$fh>) {
+	if (/([^ ]+) (.+)/) {
+	    $file_types{$1} = $2;
+	}
+    }
+}
+
+die "No argument given." unless @ARGV;
+
+my $filename = $ARGV[0];
+chomp (my $filetype = `file --brief --mime-type "$filename"`);
+my $handler = $file_types{$filetype} or die "No handler for '$filetype'.";
+$handler =~ s/##/$filename/g;
+exec $handler or die "Could not execute handler '$handler'.";
