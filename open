@@ -19,7 +19,7 @@ if (-e $conffile) {
 die "No argument given." unless @ARGV;
 
 my $filename = $ARGV[0];
-chomp (my $filetype = `file --brief --mime-type "$filename"`);
+chomp (my $filetype = `file --brief --mime-type --dereference "$filename"`);
 my $handler = $file_types{$filetype} or die "No handler for '$filetype'.";
 $handler =~ s/##/$filename/g;
 exec $handler or die "Could not execute handler '$handler'.";
